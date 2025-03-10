@@ -30,14 +30,14 @@ public class InterfaceGUI { // Declarando os componentes
         frame = new JFrame("Biblioteca de livros");
         frame.setSize(600, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setBackground(new Color(144, 238, 144));
         frame.setLayout(new BorderLayout());
-
-
 
         // Área de texto para exibição
         areaTexto = new JTextArea();
-        areaTexto.setEditable(false); //usuario n pd modificar nd
-        JScrollPane scroll = new JScrollPane(areaTexto); //barra de rolagem
+        areaTexto.setEditable(false); // Usuário não pode modificar nada
+        areaTexto.setBackground(new Color(144, 238, 144));
+        JScrollPane scroll = new JScrollPane(areaTexto); // Barra de rolagem
         frame.add(scroll, BorderLayout.CENTER);
 
         // Exibir a lista de livros disponíveis na área de texto
@@ -71,7 +71,13 @@ public class InterfaceGUI { // Declarando os componentes
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nomeUsuario = campoNomeUsuario.getText();
-                if (!nomeUsuario.isEmpty()) {
+
+                // Verifica se o nome do usuário já está na biblioteca
+                Usuario usuarioExistente = biblioteca.buscarUsuario(nomeUsuario);
+
+                if (usuarioExistente != null) {
+                    areaTexto.append("Erro: Usuário já cadastrado.\n");
+                } else if (!nomeUsuario.isEmpty()) {
                     Usuario novoUsuario = new Usuario(nomeUsuario);
                     biblioteca.adicionarUsuarios(novoUsuario);
                     areaTexto.append("Novo usuário cadastrado: " + nomeUsuario + "\n");
@@ -131,3 +137,4 @@ public class InterfaceGUI { // Declarando os componentes
         new InterfaceGUI();
     }
 }
+
