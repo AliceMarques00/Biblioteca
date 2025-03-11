@@ -1,86 +1,104 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
-public class Main{
-    public static void main(String[] args){
+
+public class Main {
+    public static void main(String[] args) {
         Biblioteca biblioteca = new Biblioteca();
         Scanner sc = new Scanner(System.in);
 
-        //add livros e usuários
-        biblioteca.adicionarLivro(new Livro("O Hobbit", "J.R.R. Tolkien"));
-        biblioteca.adicionarLivro(new Livro("1984", "George Orwell"));
-        biblioteca.adicionarLivro(new Livro("Dom Casmurro", "Machado de Assis"));
-        biblioteca.adicionarLivro(new Livro("A Moreninha", "Joaquim Manuel de Macedo"));
-        biblioteca.adicionarLivro(new Livro("Moby Dick", "Herman Melville"));
-        biblioteca.adicionarLivro(new Livro("Crime e Castigo", "Fyodor Dostoevsky"));
-        biblioteca.adicionarLivro(new Livro("O Grande Gatsby", "F. Scott Fitzgerald"));
-        biblioteca.adicionarLivro(new Livro("Cem Anos de Solidão", "Gabriel García Márquez"));
-        biblioteca.adicionarLivro(new Livro("O Senhor dos Anéis", "J.R.R. Tolkien"));
-        biblioteca.adicionarLivro(new Livro("A Revolução dos Bichos", "George Orwell"));
-        biblioteca.adicionarLivro(new Livro("O Processo", "Franz Kafka"));
-        biblioteca.adicionarLivro(new Livro("O Estrangeiro", "Albert Camus"));
-        biblioteca.adicionarLivro(new Livro("A Metamorfose", "Franz Kafka"));
-        biblioteca.adicionarLivro(new Livro("A Arte da Guerra", "Sun Tzu"));
-        biblioteca.adicionarLivro(new Livro("O Pequeno Príncipe", "Antoine de Saint-Exupéry"));
-        biblioteca.adicionarUsuarios(new Usuario("Alice"));
-        biblioteca.adicionarUsuarios(new Usuario("Luiz"));
-
-
-
-        // adicionar revistas
-        biblioteca.adicionarItem(new Revista("Science", "Editora Nature"));
-
-        //menu
         while (true) {
             try {
+                System.out.println("\n===== MENU =====");
                 System.out.println("1 - Alugar item");
                 System.out.println("2 - Devolver item");
-                System.out.println("3 - Sair");
-                System.out.println("Escolha uma opção: ");
+                System.out.println("3 - Ver livros disponíveis");
+                System.out.println("4 - Cadastrar usuário");
+                System.out.println("5 - Cadastrar livro");
+                System.out.println("6 - Sair");
+                System.out.print("Escolha uma opção: ");
+
                 int opcao = sc.nextInt();
-                sc.nextLine(); // consumir nova linha
+                sc.nextLine(); // Consumir nova linha
 
-                if (opcao == 1) {
-                    System.out.println("Digite o nome do usuário: ");
-                    String nomeUsuario = sc.nextLine();
-                    Usuario usuario = biblioteca.buscarUsuario(nomeUsuario);
+                switch (opcao) {
+                    case 1:
+                        System.out.print("Nome do usuário: ");
+                        String nomeUsuario = sc.nextLine();
+                        Usuario usuario = biblioteca.buscarUsuario(nomeUsuario);
 
-                    if (usuario != null) {
-                        System.out.println("Digite o nome do item: ");
-                        String tituloItem = sc.nextLine();
-                        Item item = biblioteca.buscarItem(tituloItem);
+                        if (usuario != null) {
+                            System.out.print("Título do livro: ");
+                            String tituloLivro = sc.nextLine();
+                            Livro livro = (Livro) biblioteca.buscarItem(tituloLivro);
 
-                        if (item != null) {
-                            usuario.alugarItem(item);
+                            if (livro != null && livro.isDisponivel()) {
+                                usuario.alugarItem(livro);
+                                biblioteca.salvarLivros(); // Atualiza o arquivo
+                            } else {
+                                System.out.println("Livro indisponível ou não encontrado.");
+                            }
                         } else {
-                            System.out.println("Item indisponível!");
+                            System.out.println("Usuário não encontrado.");
                         }
-                    } else {
-                        System.out.println("Usuário não encontrado!");
-                    }
-                } else if (opcao == 2) {
-                    System.out.println("Digite o nome do usuário: ");
-                    String nomeUsuario = sc.nextLine();
-                    Usuario usuario = biblioteca.buscarUsuario(nomeUsuario);
+                        break;
 
-                    if (usuario != null) {
-                        usuario.devolverItem();
-                    } else {
-                        System.out.println("Usuário não encontrado!");
-                    }
-                } else if (opcao == 3) {
-                    System.out.println("Saindo...");
-                    break;
-                } else {
-                    System.out.println("Opção inválida!");
+                    case 2:
+                        System.out.print("Nome do usuário: ");
+                        nomeUsuario = sc.nextLine();
+                        usuario = biblioteca.buscarUsuario(nomeUsuario);
+
+                        if (usuario != null) {
+                            System.out.print("Título do livro: ");
+                            String tituloLivro = sc.nextLine();
+                            Livro livro = (Livro) biblioteca.buscarItem(tituloLivro);
+
+                            if (livro != null) {
+                                usuario.devolverItem(livro);
+                                biblioteca.salvarLivros(); // Atualiza o arquivo
+                            } else {
+                                System.out.println("Livro não encontrado.");
+                            }
+                        } else {
+                            System.out.println("Usuário não encontrado.");
+                        }
+                        break;
+
+                    case 3:
+                        ListaLivros.exibirLivrosRevistas(biblioteca);
+                        break;
+
+                    case 4:
+                        System.out.print("Nome do novo usuário: ");
+                        nomeUsuario = sc.nextLine();
+                        if (biblioteca.buscarUsuario(nomeUsuario) != null) {
+                            System.out.println("Usuário já cadastrado.");
+                        } else {
+                            biblioteca.adicionarUsuarios(new Usuario(nomeUsuario));
+                            System.out.println("Usuário cadastrado!");
+                        }
+                        break;
+
+                    case 5:
+                        System.out.print("Título do livro: ");
+                        String titulo = sc.nextLine();
+                        System.out.print("Autor do livro: ");
+                        String autor = sc.nextLine();
+                        biblioteca.adicionarLivro(new Livro(titulo, autor));
+                        System.out.println("Livro cadastrado!");
+                        break;
+
+                    case 6:
+                        System.out.println("Saindo...");
+                        sc.close();
+                        return;
+
+                    default:
+                        System.out.println("Opção inválida!");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida! Por favor, insira um número.");
-                sc.nextLine(); // consumir a entrada inválida
-            }
-            catch (Exception e) {
-                System.out.println("Ocorreu um erro: " + e.getMessage());
+                sc.nextLine(); // Consumir entrada inválida
             }
         }
-        sc.close();
     }
 }
