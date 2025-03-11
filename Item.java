@@ -22,12 +22,4 @@ public abstract class Item {
     public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
     }
-
-    @Override
-    public String toString() {
-        return "Item{" +
-                "titulo='" + titulo + '\'' +
-                ", disponivel=" + disponivel +
-                '}';
-    }
 }
