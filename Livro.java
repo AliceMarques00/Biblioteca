@@ -14,12 +14,4 @@ public class Livro extends Item {
         this.autor = autor;
     }
 
-    @Override
-    public String toString() {
-        return "Livro{" +
-                "titulo='" + getTitulo() + '\'' +
-                ", autor='" + autor + '\'' +
-                ", disponivel=" + isDisponivel() +
-                '}';
-    }
 }
