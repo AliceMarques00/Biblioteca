@@ -14,12 +14,5 @@ public class Revista extends Item {
         this.editora = editora;
     }
 
-    @Override
-    public String toString() {
-        return "Revista{" +
-                "titulo='" + getTitulo() + '\'' +
-                ", editora='" + editora + '\'' +
-                ", disponivel=" + isDisponivel() +
-                '}';
-    }
+
 }
