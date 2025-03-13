@@ -14,18 +14,5 @@ public class ListaLivros {
             }
         }
 
-        System.out.println("\n===== REVISTAS DISPONÍVEIS =====");
-        for (Revista revista : biblioteca.getRevistas()) {
-            if (revista.isDisponivel()) {
-                System.out.println(revista.getTitulo() + " - " + revista.getEditora());
-            }
-        }
-
-        System.out.println("\n===== REVISTAS INDISPONÍVEIS =====");
-        for (Revista revista : biblioteca.getRevistas()) {
-            if (!revista.isDisponivel()) {
-                System.out.println(revista.getTitulo() + " - " + revista.getEditora());
-            }
-        }
     }
 }
