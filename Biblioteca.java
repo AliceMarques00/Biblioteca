@@ -52,7 +52,7 @@ public class Biblioteca {
     public Item buscarItem(String titulo) {
         for (Livro livro : livros) {
             if (livro.getTitulo().equalsIgnoreCase(titulo)) {
-                return livro;
+                return livro; // Retorna um objeto do tipo Livro, mas como Item(POLIMORFISM)O
             }
         }
         return null;
@@ -107,4 +107,4 @@ public class Biblioteca {
         }
     }
 
-    }
+}
