@@ -11,7 +11,6 @@ public class Usuario extends Pessoa {
     public void alugarItem(Item item) {
         if (!itensAlugados.isEmpty()) {
             System.out.println("Por favor, devolva o livro antes de alugar outro.");
-            return;
         }
 
         if (item.isDisponivel()) {
@@ -24,13 +23,7 @@ public class Usuario extends Pessoa {
     }
 
     public void devolverItem(Item item) {
-        if (itensAlugados.contains(item)) {
-            itensAlugados.remove(item);
-            item.setDisponivel(true);
-            System.out.println(getNome() + " devolveu o livro: " + item.getTitulo());
-        } else {
-            System.out.println(getNome() + " não tem este livro para devolver.");
-        }
+        item.devolver();
     }
 
     public boolean possuiLivroAlugado() {
