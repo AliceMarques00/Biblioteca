@@ -1,210 +1,302 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
-public class InterfaceGUI { // Declarando os componentes
-    private JFrame frame; // Janela principal do programa
-    private JTextArea areaTexto;
-    private JTextField campoNomeUsuario, campoTituloItem;
+public class InterfaceGUI {
     private Biblioteca biblioteca;
+    private JFrame frame;
+    private JPanel telaBoasVindas, telaMenuPrincipal, telaSistemaBiblioteca, telaCadastrarLivro;
+    private JTextField campoNomeLivro, campoAutorLivro;
 
     public InterfaceGUI() {
-        // Tela inicial
-        JFrame telaInicial = new JFrame("Bem-vindo(a)");
-        telaInicial.setSize(400, 300);
-        telaInicial.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        telaInicial.setLayout(new BorderLayout());
+        biblioteca = new Biblioteca(); // Instancia a Biblioteca
 
-        JLabel mensagemBoasVindas = new JLabel("Bem-vindo(a) à Biblioteca Virtual!", SwingConstants.CENTER);
-        mensagemBoasVindas.setFont(new Font("Arial", Font.BOLD, 18));
-        telaInicial.add(mensagemBoasVindas, BorderLayout.CENTER);
-
-        JButton btnIniciar = new JButton("Iniciar");
-        telaInicial.add(btnIniciar, BorderLayout.SOUTH);
-
-        btnIniciar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                telaInicial.dispose(); // Fecha a tela inicial
-                iniciarTelaPrincipal(); // Abre a tela principal
-            }
-        });
-
-        telaInicial.setVisible(true);
-    }
-
-    private void iniciarTelaPrincipal() {
-        biblioteca = new Biblioteca();
-        biblioteca.adicionarLivro(new Livro("O Hobbit", "J.R.R. Tolkien"));
-        biblioteca.adicionarLivro(new Livro("1984", "George Orwell"));
-        biblioteca.adicionarLivro(new Livro("Dom Casmurro", "Machado de Assis"));
-        biblioteca.adicionarLivro(new Livro("A Moreninha", "Joaquim Manuel de Macedo"));
-        biblioteca.adicionarLivro(new Livro("Moby Dick", "Herman Melville"));
-        biblioteca.adicionarLivro(new Livro("Crime e Castigo", "Fyodor Dostoevsky"));
-        biblioteca.adicionarLivro(new Livro("O Grande Gatsby", "F. Scott Fitzgerald"));
-        biblioteca.adicionarLivro(new Livro("Cem Anos de Solidão", "Gabriel García Márquez"));
-        biblioteca.adicionarLivro(new Livro("O Senhor dos Anéis", "J.R.R. Tolkien"));
-        biblioteca.adicionarLivro(new Livro("A Revolução dos Bichos", "George Orwell"));
-        biblioteca.adicionarLivro(new Livro("O Processo", "Franz Kafka"));
-        biblioteca.adicionarLivro(new Livro("O Estrangeiro", "Albert Camus"));
-        biblioteca.adicionarLivro(new Livro("A Metamorfose", "Franz Kafka"));
-        biblioteca.adicionarLivro(new Livro("A Arte da Guerra", "Sun Tzu"));
-        biblioteca.adicionarLivro(new Livro("O Pequeno Príncipe", "Antoine de Saint-Exupéry"));
-
-        frame = new JFrame("Biblioteca de livros");
-        frame.setSize(600, 500);
+        // Configuração da janela principal
+        frame = new JFrame("Biblioteca Virtual");
+        frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setBackground(new Color(144, 238, 144));
-        frame.setLayout(new BorderLayout());
+        frame.setLayout(new CardLayout());
 
-        // Área de texto para exibição
-        areaTexto = new JTextArea();
-        areaTexto.setEditable(false); // Usuário não pode modificar nada
-        areaTexto.setBackground(new Color(144, 238, 144));
-        JScrollPane scroll = new JScrollPane(areaTexto); // Barra de rolagem
-        frame.add(scroll, BorderLayout.CENTER);
+        // Cria as telas
+        criarTelaBoasVindas();
+        criarTelaMenuPrincipal();
+        criarTelaSistemaBiblioteca();
+        criarTelaCadastrarLivro();
 
-        // Painel de controle
-        JPanel painel = new JPanel();
-        painel.setLayout(new GridLayout(8, 2)); // Alterado para 8 linhas
+        // Adiciona as telas ao frame
+        frame.add(telaBoasVindas, "BoasVindas");
+        frame.add(telaMenuPrincipal, "MenuPrincipal");
+        frame.add(telaSistemaBiblioteca, "SistemaBiblioteca");
+        frame.add(telaCadastrarLivro, "CadastrarLivro");
 
-        painel.add(new JLabel("Nome do Usuário:"));
-        campoNomeUsuario = new JTextField();
-        painel.add(campoNomeUsuario);
-
-        painel.add(new JLabel("Título do Item:"));
-        campoTituloItem = new JTextField();
-        painel.add(campoTituloItem);
-
-        JButton btnCadastrarUsuario = new JButton("Cadastrar Usuário");
-        painel.add(btnCadastrarUsuario);
-
-        JButton btnAlugar = new JButton("Alugar Item");
-        painel.add(btnAlugar);
-
-        JButton btnDevolver = new JButton("Devolver Item");
-        painel.add(btnDevolver);
-
-        JButton btnVisualizarLivros = new JButton("Visualizar Livros");
-        painel.add(btnVisualizarLivros);
-
-        JButton btnVoltar = new JButton("Voltar");
-        painel.add(btnVoltar);
-
-        JButton btnEncerrar = new JButton("Encerrar");
-        painel.add(btnEncerrar);
-
-        frame.add(painel, BorderLayout.SOUTH);
-
-        // Ação de cadastrar usuário
-        btnCadastrarUsuario.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nomeUsuario = campoNomeUsuario.getText();
-
-                if (!nomeUsuario.isEmpty()) {
-                    try {
-                        Usuario novoUsuario = new Usuario(nomeUsuario);
-                        biblioteca.adicionarUsuario(novoUsuario);
-                        areaTexto.append("Novo usuário cadastrado: " + nomeUsuario + "\n");
-                        campoNomeUsuario.setText("");
-                    } catch (UsuarioJaCadastradoException ex)
-                    //uso da exception
-                    {
-                        areaTexto.append("Erro: " + ex.getMessage() + "\n");
-                    }
-                } else {
-                    areaTexto.append("Erro: O nome do usuário não pode ser vazio.\n");
-                }
-            }
-        });
-
-        // Ação de alugar item
-        btnAlugar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nomeUsuario = campoNomeUsuario.getText();
-                String tituloItem = campoTituloItem.getText();
-                Usuario usuario = biblioteca.buscarUsuario(nomeUsuario);
-                Item item = biblioteca.buscarItem(tituloItem);
-
-                if (usuario != null && item != null) {
-                    if (item.isDisponivel()) {
-                        usuario.alugarItem(item);
-                        areaTexto.append(usuario.getNome() + " alugou o item: " + item.getTitulo() + "\n");
-                    } else {
-                        areaTexto.append("Erro: O item " + item.getTitulo() + " já está alugado.\n");
-                    }
-                } else {
-                    areaTexto.append("Erro: Usuário ou item não encontrado.\n");
-                }
-            }
-        });
-
-        // Ação de devolver item
-        btnDevolver.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nomeUsuario = campoNomeUsuario.getText();
-                String tituloItem = campoTituloItem.getText();
-                Usuario usuario = biblioteca.buscarUsuario(nomeUsuario);
-                Item item = biblioteca.buscarItem(tituloItem);
-
-                if (usuario != null && item != null) {
-                    if (!item.isDisponivel()) {
-                        usuario.devolverItem(item);
-                        areaTexto.append(usuario.getNome() + " devolveu o item: " + item.getTitulo() + "\n");
-                    } else {
-                        areaTexto.append("Erro: O item " + item.getTitulo() + " não está alugado.\n");
-                    }
-                } else {
-                    areaTexto.append("Erro: Usuário ou item não encontrado.\n");
-                }
-            }
-        });
-
-        // Ação de visualizar livros
-        btnVisualizarLivros.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                exibirLivrosDisponiveis();
-            }
-        });
-
-        // Ação de voltar à tela inicial
-        btnVoltar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Fecha a tela principal
-                new InterfaceGUI(); // Abre a tela inicial
-            }
-        });
-
-        // Ação de encerrar o programa
-        btnEncerrar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0); // Encerra o programa
-            }
-        });
-
+        // Exibe a tela de boas-vindas
+        ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "BoasVindas");
         frame.setVisible(true);
     }
 
-    // Método para exibir a lista de livros disponíveis
-    private void exibirLivrosDisponiveis() {
-        areaTexto.setText(""); // Limpa a área de texto antes de exibir os livros
-        areaTexto.append("Livros disponíveis:\n");
+    // Tela 1: Boas-Vindas
+    private void criarTelaBoasVindas() {
+        telaBoasVindas = new JPanel();
+        telaBoasVindas.setLayout(new BorderLayout());
+        telaBoasVindas.setBackground(new Color(245, 222, 179)); // Cor de papel antigo
+
+        // Título
+        JLabel lblTitulo = new JLabel("Bem-vindo à Biblioteca Virtual", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Serif", Font.BOLD, 30));
+        lblTitulo.setForeground(new Color(139, 69, 19)); // Cor marrom
+        telaBoasVindas.add(lblTitulo, BorderLayout.CENTER);
+
+        // Botão para continuar
+        JButton btnContinuar = new JButton("Continuar");
+        btnContinuar.setFont(new Font("Serif", Font.PLAIN, 18));
+        btnContinuar.setBackground(new Color(139, 69, 19)); // Cor marrom
+        btnContinuar.setForeground(Color.WHITE);
+        btnContinuar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Navega para a Tela 2 (Menu Principal)
+                ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "MenuPrincipal");
+            }
+        });
+        telaBoasVindas.add(btnContinuar, BorderLayout.SOUTH);
+    }
+
+    // Tela 2: Menu Principal
+    private void criarTelaMenuPrincipal() {
+        telaMenuPrincipal = new JPanel();
+        telaMenuPrincipal.setLayout(new GridLayout(3, 1, 10, 10));
+        telaMenuPrincipal.setBackground(new Color(245, 222, 179)); // Cor de papel antigo
+        telaMenuPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JButton btnAcessarSistema = criarBotao("Acessar Sistema");
+        JButton btnSair = criarBotao("Sair");
+
+        btnAcessarSistema.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Navega para a Tela 3 (Sistema da Biblioteca)
+                ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "SistemaBiblioteca");
+            }
+        });
+
+        btnSair.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); // Fecha o programa
+            }
+        });
+
+        telaMenuPrincipal.add(btnAcessarSistema);
+        telaMenuPrincipal.add(btnSair);
+    }
+
+    // Tela 3: Sistema da Biblioteca
+    private void criarTelaSistemaBiblioteca() {
+        telaSistemaBiblioteca = new JPanel();
+        telaSistemaBiblioteca.setLayout(new GridLayout(6, 1, 10, 10));
+        telaSistemaBiblioteca.setBackground(new Color(245, 222, 179)); // Cor de papel antigo
+        telaSistemaBiblioteca.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JButton btnCadastrarUsuario = criarBotao("Cadastrar Usuário");
+        JButton btnAlugarLivro = criarBotao("Alugar Livro");
+        JButton btnDevolverLivro = criarBotao("Devolver Livro");
+        JButton btnVerLivros = criarBotao("Ver Lista de Livros");
+        JButton btnCadastrarLivro = criarBotao("Cadastrar Livro");
+        JButton btnVoltar = criarBotao("Voltar ao Menu Principal");
+
+        btnCadastrarUsuario.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cadastrarUsuario();
+            }
+        });
+
+        btnAlugarLivro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                alugarLivro();
+            }
+        });
+
+        btnDevolverLivro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                devolverLivro();
+            }
+        });
+
+        btnVerLivros.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                verListaLivros();
+            }
+        });
+
+        btnCadastrarLivro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Navega para a Tela 4 (Cadastrar Livro)
+                ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "CadastrarLivro");
+            }
+        });
+
+        btnVoltar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Volta para a Tela 2 (Menu Principal)
+                ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "MenuPrincipal");
+            }
+        });
+
+        telaSistemaBiblioteca.add(btnCadastrarUsuario);
+        telaSistemaBiblioteca.add(btnAlugarLivro);
+        telaSistemaBiblioteca.add(btnDevolverLivro);
+        telaSistemaBiblioteca.add(btnVerLivros);
+        telaSistemaBiblioteca.add(btnCadastrarLivro);
+        telaSistemaBiblioteca.add(btnVoltar);
+    }
+
+    // Tela 4: Cadastrar Livro
+    private void criarTelaCadastrarLivro() {
+        telaCadastrarLivro = new JPanel();
+        telaCadastrarLivro.setLayout(new GridLayout(4, 1, 10, 10));
+        telaCadastrarLivro.setBackground(new Color(245, 222, 179)); // Cor de papel antigo
+        telaCadastrarLivro.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JLabel lblNomeLivro = new JLabel("Nome do Livro:");
+        lblNomeLivro.setFont(new Font("Serif", Font.PLAIN, 18));
+        campoNomeLivro = new JTextField();
+
+        JLabel lblAutorLivro = new JLabel("Nome do Autor:");
+        lblAutorLivro.setFont(new Font("Serif", Font.PLAIN, 18));
+        campoAutorLivro = new JTextField();
+
+        JButton btnCadastrar = criarBotao("Cadastrar");
+        JButton btnVoltar = criarBotao("Voltar");
+
+        btnCadastrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cadastrarLivro();
+            }
+        });
+
+        btnVoltar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Volta para a Tela 3 (Sistema da Biblioteca)
+                ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "SistemaBiblioteca");
+            }
+        });
+
+        telaCadastrarLivro.add(lblNomeLivro);
+        telaCadastrarLivro.add(campoNomeLivro);
+        telaCadastrarLivro.add(lblAutorLivro);
+        telaCadastrarLivro.add(campoAutorLivro);
+        telaCadastrarLivro.add(btnCadastrar);
+        telaCadastrarLivro.add(btnVoltar);
+    }
+
+    // Método para criar botões estilizados
+    private JButton criarBotao(String texto) {
+        JButton botao = new JButton(texto);
+        botao.setFont(new Font("Serif", Font.PLAIN, 18));
+        botao.setBackground(new Color(139, 69, 19)); // Cor marrom
+        botao.setForeground(Color.WHITE);
+        botao.setFocusPainted(false);
+        return botao;
+    }
+
+    // Métodos para operações
+    private void cadastrarUsuario() {
+        String nomeUsuario = JOptionPane.showInputDialog(frame, "Digite o nome do usuário:");
+        if (nomeUsuario != null && !nomeUsuario.isEmpty()) {
+            try {
+                biblioteca.adicionarUsuario(new Usuario(nomeUsuario)); // Instancia um novo Usuário e adiciona à biblioteca
+                JOptionPane.showMessageDialog(frame, "Usuário cadastrado com sucesso!");
+            } catch (UsuarioJaCadastradoException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void alugarLivro() {
+        String nomeUsuario = JOptionPane.showInputDialog(frame, "Digite o nome do usuário:");
+        if (nomeUsuario != null && !nomeUsuario.isEmpty()) {
+            Usuario usuario = biblioteca.buscarUsuario(nomeUsuario); // Busca o usuário na biblioteca
+            if (usuario != null) {
+                String tituloLivro = JOptionPane.showInputDialog(frame, "Digite o título do livro:");
+                if (tituloLivro != null && !tituloLivro.isEmpty()) {
+                    Livro livro = (Livro) biblioteca.buscarItem(tituloLivro); // Busca o livro na biblioteca
+                    if (livro != null && livro.isDisponivel()) {
+                        usuario.alugarItem(livro); // Aluga o livro para o usuário
+                        biblioteca.salvarLivros(); // Atualiza o arquivo de livros
+                        JOptionPane.showMessageDialog(frame, "Livro alugado com sucesso!");
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Livro indisponível ou não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "Usuário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void devolverLivro() {
+        String nomeUsuario = JOptionPane.showInputDialog(frame, "Digite o nome do usuário:");
+        if (nomeUsuario != null && !nomeUsuario.isEmpty()) {
+            Usuario usuario = biblioteca.buscarUsuario(nomeUsuario); // Busca o usuário na biblioteca
+            if (usuario != null) {
+                String tituloLivro = JOptionPane.showInputDialog(frame, "Digite o título do livro:");
+                if (tituloLivro != null && !tituloLivro.isEmpty()) {
+                    Livro livro = (Livro) biblioteca.buscarItem(tituloLivro); // Busca o livro na biblioteca
+                    if (livro != null) {
+                        usuario.devolverItem(livro); // Devolve o livro
+                        biblioteca.salvarLivros(); // Atualiza o arquivo de livros
+                        JOptionPane.showMessageDialog(frame, "Livro devolvido com sucesso!");
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Livro não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "Usuário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void verListaLivros() {
+        StringBuilder lista = new StringBuilder("===== LIVROS DISPONÍVEIS =====\n");
         for (Livro livro : biblioteca.getLivros()) {
-            areaTexto.append(livro.getTitulo() + " - " + livro.getAutor() + "\n");
+            if (livro.isDisponivel()) {
+                lista.append(livro.getTitulo()).append(" - ").append(livro.getAutor()).append("\n");
+            }
+        }
+        lista.append("\n===== LIVROS INDISPONÍVEIS =====\n");
+        for (Livro livro : biblioteca.getLivros()) {
+            if (!livro.isDisponivel()) {
+                lista.append(livro.getTitulo()).append(" - ").append(livro.getAutor()).append("\n");
+            }
+        }
+        JOptionPane.showMessageDialog(frame, lista.toString(), "Lista de Livros", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void cadastrarLivro() {
+        String titulo = campoNomeLivro.getText();
+        String autor = campoAutorLivro.getText();
+
+        if (!titulo.isEmpty() && !autor.isEmpty()) {
+            biblioteca.adicionarLivro(new Livro(titulo, autor)); // Instancia um novo Livro e adiciona à biblioteca
+            JOptionPane.showMessageDialog(frame, "Livro cadastrado com sucesso!");
+            campoNomeLivro.setText("");
+            campoAutorLivro.setText("");
+        } else {
+            JOptionPane.showMessageDialog(frame, "Preencha todos os campos!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public static void main(String[] args) {
-        new InterfaceGUI();
+        new InterfaceGUI(); // Inicia a interface gráfica
     }
 }
-
