@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InterfaceGUI { // Declarando os componentes
     private JFrame frame; // Janela principal do programa
@@ -10,6 +12,31 @@ public class InterfaceGUI { // Declarando os componentes
     private Biblioteca biblioteca;
 
     public InterfaceGUI() {
+        // Tela inicial
+        JFrame telaInicial = new JFrame("Bem-vindo(a)");
+        telaInicial.setSize(400, 300);
+        telaInicial.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        telaInicial.setLayout(new BorderLayout());
+
+        JLabel mensagemBoasVindas = new JLabel("Bem-vindo(a) à Biblioteca Virtual!", SwingConstants.CENTER);
+        mensagemBoasVindas.setFont(new Font("Arial", Font.BOLD, 18));
+        telaInicial.add(mensagemBoasVindas, BorderLayout.CENTER);
+
+        JButton btnIniciar = new JButton("Iniciar");
+        telaInicial.add(btnIniciar, BorderLayout.SOUTH);
+
+        btnIniciar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                telaInicial.dispose(); // Fecha a tela inicial
+                iniciarTelaPrincipal(); // Abre a tela principal
+            }
+        });
+
+        telaInicial.setVisible(true);
+    }
+
+    private void iniciarTelaPrincipal() {
         biblioteca = new Biblioteca();
         biblioteca.adicionarLivro(new Livro("O Hobbit", "J.R.R. Tolkien"));
         biblioteca.adicionarLivro(new Livro("1984", "George Orwell"));
@@ -40,12 +67,9 @@ public class InterfaceGUI { // Declarando os componentes
         JScrollPane scroll = new JScrollPane(areaTexto); // Barra de rolagem
         frame.add(scroll, BorderLayout.CENTER);
 
-        // Exibir a lista de livros disponíveis na área de texto
-        exibirLivrosDisponiveis();
-
         // Painel de controle
         JPanel painel = new JPanel();
-        painel.setLayout(new GridLayout(5, 2));
+        painel.setLayout(new GridLayout(8, 2)); // Alterado para 8 linhas
 
         painel.add(new JLabel("Nome do Usuário:"));
         campoNomeUsuario = new JTextField();
@@ -64,6 +88,15 @@ public class InterfaceGUI { // Declarando os componentes
         JButton btnDevolver = new JButton("Devolver Item");
         painel.add(btnDevolver);
 
+        JButton btnVisualizarLivros = new JButton("Visualizar Livros");
+        painel.add(btnVisualizarLivros);
+
+        JButton btnVoltar = new JButton("Voltar");
+        painel.add(btnVoltar);
+
+        JButton btnEncerrar = new JButton("Encerrar");
+        painel.add(btnEncerrar);
+
         frame.add(painel, BorderLayout.SOUTH);
 
         // Ação de cadastrar usuário
@@ -72,16 +105,17 @@ public class InterfaceGUI { // Declarando os componentes
             public void actionPerformed(ActionEvent e) {
                 String nomeUsuario = campoNomeUsuario.getText();
 
-                // Verifica se o nome do usuário já está na biblioteca
-                Usuario usuarioExistente = biblioteca.buscarUsuario(nomeUsuario);
-
-                if (usuarioExistente != null) {
-                    areaTexto.append("Erro: Usuário já cadastrado.\n");
-                } else if (!nomeUsuario.isEmpty()) {
-                    Usuario novoUsuario = new Usuario(nomeUsuario);
-                    biblioteca.adicionarUsuarios(novoUsuario);
-                    areaTexto.append("Novo usuário cadastrado: " + nomeUsuario + "\n");
-                    campoNomeUsuario.setText("");
+                if (!nomeUsuario.isEmpty()) {
+                    try {
+                        Usuario novoUsuario = new Usuario(nomeUsuario);
+                        biblioteca.adicionarUsuario(novoUsuario);
+                        areaTexto.append("Novo usuário cadastrado: " + nomeUsuario + "\n");
+                        campoNomeUsuario.setText("");
+                    } catch (UsuarioJaCadastradoException ex)
+                    //uso da exception
+                    {
+                        areaTexto.append("Erro: " + ex.getMessage() + "\n");
+                    }
                 } else {
                     areaTexto.append("Erro: O nome do usuário não pode ser vazio.\n");
                 }
@@ -98,8 +132,12 @@ public class InterfaceGUI { // Declarando os componentes
                 Item item = biblioteca.buscarItem(tituloItem);
 
                 if (usuario != null && item != null) {
-                    usuario.alugarItem(item);
-                    areaTexto.append(usuario.getNome() + " alugou o item: " + item.getTitulo() + "\n");
+                    if (item.isDisponivel()) {
+                        usuario.alugarItem(item);
+                        areaTexto.append(usuario.getNome() + " alugou o item: " + item.getTitulo() + "\n");
+                    } else {
+                        areaTexto.append("Erro: O item " + item.getTitulo() + " já está alugado.\n");
+                    }
                 } else {
                     areaTexto.append("Erro: Usuário ou item não encontrado.\n");
                 }
@@ -111,14 +149,45 @@ public class InterfaceGUI { // Declarando os componentes
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nomeUsuario = campoNomeUsuario.getText();
+                String tituloItem = campoTituloItem.getText();
                 Usuario usuario = biblioteca.buscarUsuario(nomeUsuario);
+                Item item = biblioteca.buscarItem(tituloItem);
 
-                if (usuario != null) {
-                    usuario.devolverItem();
-                    areaTexto.append(usuario.getNome() + " devolveu um item.\n");
+                if (usuario != null && item != null) {
+                    if (!item.isDisponivel()) {
+                        usuario.devolverItem(item);
+                        areaTexto.append(usuario.getNome() + " devolveu o item: " + item.getTitulo() + "\n");
+                    } else {
+                        areaTexto.append("Erro: O item " + item.getTitulo() + " não está alugado.\n");
+                    }
                 } else {
-                    areaTexto.append("Erro: Usuário não encontrado.\n");
+                    areaTexto.append("Erro: Usuário ou item não encontrado.\n");
                 }
+            }
+        });
+
+        // Ação de visualizar livros
+        btnVisualizarLivros.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exibirLivrosDisponiveis();
+            }
+        });
+
+        // Ação de voltar à tela inicial
+        btnVoltar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); // Fecha a tela principal
+                new InterfaceGUI(); // Abre a tela inicial
+            }
+        });
+
+        // Ação de encerrar o programa
+        btnEncerrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); // Encerra o programa
             }
         });
 
@@ -127,6 +196,7 @@ public class InterfaceGUI { // Declarando os componentes
 
     // Método para exibir a lista de livros disponíveis
     private void exibirLivrosDisponiveis() {
+        areaTexto.setText(""); // Limpa a área de texto antes de exibir os livros
         areaTexto.append("Livros disponíveis:\n");
         for (Livro livro : biblioteca.getLivros()) {
             areaTexto.append(livro.getTitulo() + " - " + livro.getAutor() + "\n");
