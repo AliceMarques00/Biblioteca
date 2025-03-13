@@ -4,11 +4,11 @@ import java.util.List;
 public class Usuario extends Pessoa {
     private List<Item> itensAlugados = new ArrayList<>();
 
-    public Usuario(String nome) {
+    public Usuario(String nome) {//INSTANCIADO NA INTERFACE
         super(nome);
     }
 
-    public void alugarItem(Item item) {
+    public void alugarItem(Item item) { //INSTANCIADO NA INTERFACE
         if (!itensAlugados.isEmpty()) {
             System.out.println("Por favor, devolva o livro antes de alugar outro.");
         }

@@ -18,7 +18,7 @@ public abstract class Item {
 
     public boolean isDisponivel() {
         return disponivel;
-    }
+    }//INSTANCIADO NA INTERFACE
 
     public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;

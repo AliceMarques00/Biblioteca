@@ -29,7 +29,7 @@ public class Biblioteca {
         return livros;
     }
 
-    public void adicionarUsuarios(Usuario usuario) {
+    public void adicionarUsuarios(Usuario usuario) {  //INSTANCIANDO NA INTERFACE
         usuarios.add(usuario);
         salvarUsuarios();
     }
@@ -40,7 +40,7 @@ public class Biblioteca {
     }
 
 
-    public Usuario buscarUsuario(String nome) {
+    public Usuario buscarUsuario(String nome) { //INSTANCIANDO NA INTERFACE
         for (Usuario usuario : usuarios) {
             if (usuario.getNome().equalsIgnoreCase(nome)) {
                 return usuario;
@@ -49,7 +49,7 @@ public class Biblioteca {
         return null;
     }
 
-    public Item buscarItem(String titulo) {
+    public Item buscarItem(String titulo) { //INSTANCIADO NA INTERFACE
         for (Livro livro : livros) {
             if (livro.getTitulo().equalsIgnoreCase(titulo)) {
                 return livro; // Retorna um objeto do tipo Livro, mas como Item(POLIMORFISM)O
@@ -58,7 +58,7 @@ public class Biblioteca {
         return null;
     }
 
-    public void salvarUsuarios() {
+    public void salvarUsuarios() {//INSTACIAR NA INTERFACE
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt"))) {
             for (Usuario usuario : usuarios) {
                 writer.write(usuario.getNome());
@@ -73,14 +73,14 @@ public class Biblioteca {
         try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"))) {
             String linha;
             while ((linha = reader.readLine()) != null) {
-                usuarios.add(new Usuario(linha));
+                usuarios.add(new Usuario(linha)); // Criado na class usuario
             }
         } catch (IOException e) {
             System.out.println("Nenhum usuário encontrado.");
         }
     }
 
-    public void salvarLivros() {
+    public void salvarLivros() { //INSTANCIADA NA INTERFACE
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("livros.txt"))) {
             for (Livro livro : livros) {
                 writer.write(livro.getTitulo() + ";" + livro.getAutor() + ";" + livro.isDisponivel());

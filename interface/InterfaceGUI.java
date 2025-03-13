@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -214,7 +213,8 @@ public class InterfaceGUI {
         String nomeUsuario = JOptionPane.showInputDialog(frame, "Digite o nome do usuário:");
         if (nomeUsuario != null && !nomeUsuario.isEmpty()) {
             try {
-                biblioteca.adicionarUsuario(new Usuario(nomeUsuario)); // Instancia um novo Usuário e adiciona à biblioteca
+                biblioteca.adicionarUsuario(new Usuario(nomeUsuario)); // Instancia um novo Usuário e adiciona à biblioteca(CRIADO EM BIBLIOTECA)
+                biblioteca.salvarUsuarios();
                 JOptionPane.showMessageDialog(frame, "Usuário cadastrado com sucesso!");
             } catch (UsuarioJaCadastradoException e) {
                 JOptionPane.showMessageDialog(frame, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -225,14 +225,14 @@ public class InterfaceGUI {
     private void alugarLivro() {
         String nomeUsuario = JOptionPane.showInputDialog(frame, "Digite o nome do usuário:");
         if (nomeUsuario != null && !nomeUsuario.isEmpty()) {
-            Usuario usuario = biblioteca.buscarUsuario(nomeUsuario); // Busca o usuário na biblioteca
+            Usuario usuario = biblioteca.buscarUsuario(nomeUsuario); // Busca o usuário na biblioteca (CRIADO NA BIBLIOTECA)
             if (usuario != null) {
                 String tituloLivro = JOptionPane.showInputDialog(frame, "Digite o título do livro:");
                 if (tituloLivro != null && !tituloLivro.isEmpty()) {
-                    Livro livro = (Livro) biblioteca.buscarItem(tituloLivro); // Busca o livro na biblioteca
+                    Livro livro = (Livro) biblioteca.buscarItem(tituloLivro); // Busca o livro na biblioteca(CRIADO NA BIBLIOTECA)
                     if (livro != null && livro.isDisponivel()) {
-                        usuario.alugarItem(livro); // Aluga o livro para o usuário
-                        biblioteca.salvarLivros(); // Atualiza o arquivo de livros
+                        usuario.alugarItem(livro); // Aluga o livro para o usuário(CRIADA EM USUARIO)
+                        biblioteca.salvarLivros(); // Atualiza o arquivo de livros(CRIADA EM BIBLIOTECA)
                         JOptionPane.showMessageDialog(frame, "Livro alugado com sucesso!");
                     } else {
                         JOptionPane.showMessageDialog(frame, "Livro indisponível ou não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -269,13 +269,13 @@ public class InterfaceGUI {
     private void verListaLivros() {
         StringBuilder lista = new StringBuilder("===== LIVROS DISPONÍVEIS =====\n");
         for (Livro livro : biblioteca.getLivros()) {
-            if (livro.isDisponivel()) {
+            if (livro.isDisponivel()) { //CRIADA NA CLASS ITEM
                 lista.append(livro.getTitulo()).append(" - ").append(livro.getAutor()).append("\n");
             }
         }
         lista.append("\n===== LIVROS INDISPONÍVEIS =====\n");
         for (Livro livro : biblioteca.getLivros()) {
-            if (!livro.isDisponivel()) {
+            if (!livro.isDisponivel()) { // CRIADA NA CLASS ITEM
                 lista.append(livro.getTitulo()).append(" - ").append(livro.getAutor()).append("\n");
             }
         }
