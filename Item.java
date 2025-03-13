@@ -22,4 +22,12 @@ public abstract class Item {
     public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
     }
+
+    public void alugar() {
+        this.disponivel = false;
+    }
+
+    public void devolver() {
+        this.disponivel = true;
+    }
 }
