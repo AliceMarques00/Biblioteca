@@ -13,5 +13,4 @@ public class Livro extends Item {
     public void setAutor(String autor) {
         this.autor = autor;
     }
-
 }
